@@ -1,0 +1,91 @@
+import sys
+import time
+
+class TermColors:
+    """
+    ANSI color codes for terminal text formatting
+    """
+    HEADER = '\033[95m'    # Pink
+    BLUE = '\033[94m'      # Blue
+    GREEN = '\033[92m'     # Green
+    YELLOW = '\033[93m'    # Yellow
+    RED = '\033[91m'       # Red
+    BOLD = '\033[1m'       # Bold
+    UNDERLINE = '\033[4m'  # Underline
+    END = '\033[0m'        # Reset formatting
+
+def print_progress(message, seconds=0.5, color=None):
+    """
+    Display a progress message with animation and optional color
+    
+    Args:
+        message (str): Message to display
+        seconds (float): Duration of the animation
+        color: Terminal color code
+    """
+    animation = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+    formatted_message = f"{color}{message}{TermColors.END}" if color else message
+    sys.stdout.write(f"\r{formatted_message} ")
+
+    for i in range(10):
+        sys.stdout.write(f"{animation[i % len(animation)]}")
+        sys.stdout.flush()
+        time.sleep(seconds/10)
+        sys.stdout.write("\b \b")
+        sys.stdout.flush()
+
+    sys.stdout.write(f"{TermColors.GREEN}✓{TermColors.END}\n")
+    sys.stdout.flush()
+
+def print_section_title(number, title):
+    """
+    Display a formatted section title with borders
+    
+    Args:
+        number (int): Section number
+        title (str): Section title text
+    """
+    print(f"\n{TermColors.BOLD}{TermColors.BLUE}{'='*50}{TermColors.END}")
+    print(f"{TermColors.BOLD}{TermColors.BLUE}{number}- {title}{TermColors.END}")
+    print(f"{TermColors.BOLD}{TermColors.BLUE}{'='*50}{TermColors.END}")
+
+def get_prefix(street_name):
+    """
+    Extract street type prefix from street name
+    
+    Args:
+        street_name (str): Full street name
+        
+    Returns:
+        str: Street type prefix or 'Autre' if no match
+    """
+    prefixes = ['Allée', 'Route', 'Chemin', 'Rue', 'Avenue', 'Boulevard', 'Place', 'Impasse']
+
+    for prefix in prefixes:
+        if street_name.startswith(prefix):
+            return prefix
+    return 'Autre'
+
+def get_color(prefix):
+    """
+    Get color code for street type visualization
+    
+    Args:
+        prefix (str): Street type prefix
+        
+    Returns:
+        str: Hex color code
+    """
+    color_map = {
+        'Allée': '#FFD1DC',  # Pastel Pink
+        'Route': '#C1FFC1',  # Pastel Green
+        'Chemin': '#FFCCCB',  # Pastel Red
+        'Rue': '#E6E6FA',    # Pastel Purple
+        'Avenue': '#FFD700',  # Pastel Gold
+        'Boulevard': '#98FB98',  # Pastel Green
+        'Place': '#FFA07A',   # Pastel Orange
+        'Impasse': '#ADD8E6',  # Pastel Blue
+        'Autoroute/Périphérique': '#D3D3D3',  # Pastel Gray
+        'Autre': '#F0E68C'     # Pastel Yellow
+    }
+    return color_map.get(prefix, '#D3D3D3')
