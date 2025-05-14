@@ -2,9 +2,7 @@ import sys
 import time
 
 class TermColors:
-    """
-    ANSI color codes for terminal text formatting
-    """
+    """ANSI color codes for terminal text formatting"""
     HEADER = '\033[95m'    # Pink
     BLUE = '\033[94m'      # Blue
     GREEN = '\033[92m'     # Green
@@ -42,7 +40,7 @@ def print_section_title(number, title):
     Display a formatted section title with borders
     
     Args:
-        number (int): Section number
+        number (int or str): Section number
         title (str): Section title text
     """
     print(f"\n{TermColors.BOLD}{TermColors.BLUE}{'='*50}{TermColors.END}")
@@ -59,7 +57,18 @@ def get_prefix(street_name):
     Returns:
         str: Street type prefix or 'Autre' if no match
     """
-    prefixes = ['Allée', 'Route', 'Chemin', 'Rue', 'Avenue', 'Boulevard', 'Place', 'Impasse']
+    prefixes = [
+        'Rue',
+        'Place',
+        'Avenue',
+        'Quai',
+        'Allée',
+        'Boulevard',
+        'Impasse',
+        'Cours',
+        'Montée',
+        'Passage',
+    ]
 
     for prefix in prefixes:
         if street_name.startswith(prefix):
@@ -77,15 +86,16 @@ def get_color(prefix):
         str: Hex color code
     """
     color_map = {
-        'Allée': '#FFD1DC',  # Pastel Pink
-        'Route': '#C1FFC1',  # Pastel Green
-        'Chemin': '#FFCCCB',  # Pastel Red
-        'Rue': '#E6E6FA',    # Pastel Purple
-        'Avenue': '#FFD700',  # Pastel Gold
-        'Boulevard': '#98FB98',  # Pastel Green
-        'Place': '#FFA07A',   # Pastel Orange
-        'Impasse': '#ADD8E6',  # Pastel Blue
-        'Autoroute/Périphérique': '#D3D3D3',  # Pastel Gray
-        'Autre': '#F0E68C'     # Pastel Yellow
+        'Rue': '#E6E6FA',  # Rue
+        'Place': '#FFD700',  # Place
+        'Avenue': '#98FB98',  # Avenue
+        'Quai': '#FFA07A',  # Quai
+        'Allée': '#ADD8E6',  # Allée
+        'Boulevard': '#FFCCCB',  # Boulevard
+        'Impasse': '#FFD1DC',  # Impasse
+        'Cours': '#C1FFC1',  # Cours
+        'Montée': '#87CEFA',  # Montée
+        'Passage': '#FFDEAD',  # Passage
+        'Autre': '#F0E68C'      # Khaki
     }
     return color_map.get(prefix, '#D3D3D3')

@@ -12,7 +12,7 @@ from utils import (
     print_progress, 
     print_section_title, 
     get_prefix, 
-    get_color
+    get_color,
 )
 
 # 1- Récupération des données (rues de Lyon et limites de la ville)
