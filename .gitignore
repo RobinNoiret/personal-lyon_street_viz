@@ -1,2 +1,4 @@
 data/*
 results/*.html
+src/lyonStreetViz/*
+src/__pycache__/*
