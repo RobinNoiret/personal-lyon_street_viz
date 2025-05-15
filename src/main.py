@@ -15,6 +15,63 @@ from utils import (
     get_color,
 )
 
+# Fonction pour obtenir les préférences de l'utilisateur
+def get_user_preferences():
+    preferences = {}
+    
+    print_section_title("Configuration", "Options de visualisation")
+    
+    # Option pour le thème de la carte
+    print(f"{TermColors.YELLOW}Choisissez le thème de la carte :{TermColors.END}")
+    print("  1. Mode clair (CartoDB Positron)")
+    print("  2. Mode sombre (CartoDB Dark Matter)")
+    
+    while True:
+        try:
+            choice = input(f"{TermColors.BOLD}Votre choix [1/2] (défaut: 1): {TermColors.END}")
+            if choice == "":
+                choice = "1"  # Valeur par défaut
+            choice = int(choice)
+            if choice in [1, 2]:
+                break
+            else:
+                print(f"{TermColors.RED}Choix invalide. Veuillez entrer 1 ou 2.{TermColors.END}")
+        except ValueError:
+            print(f"{TermColors.RED}Veuillez entrer un nombre.{TermColors.END}")
+    
+    # Stocker à la fois le thème de carte et la palette de couleurs
+    preferences["map_theme"] = "CartoDB Positron" if choice == 1 else "CartoDB dark_matter"
+    preferences["color_theme"] = "light" if choice == 1 else "dark"
+    
+    # Option pour l'export (possibilité d'extension future)
+    print(f"\n{TermColors.YELLOW}Formats d'export :{TermColors.END}")
+    print("  1. HTML uniquement")
+    print("  2. HTML + PNG (nécessite des dépendances supplémentaires)")
+    
+    while True:
+        try:
+            choice = input(f"{TermColors.BOLD}Votre choix [1/2] (défaut: 1): {TermColors.END}")
+            if choice == "":
+                choice = "1"  # Valeur par défaut
+            choice = int(choice)
+            if choice in [1, 2]:
+                break
+            else:
+                print(f"{TermColors.RED}Choix invalide. Veuillez entrer 1 ou 2.{TermColors.END}")
+        except ValueError:
+            print(f"{TermColors.RED}Veuillez entrer un nombre.{TermColors.END}")
+    
+    preferences["export_format"] = choice
+    
+    print(f"\n{TermColors.GREEN}Configuration enregistrée !{TermColors.END}\n")
+    return preferences
+
+# Début du programme
+print_section_title(0, "Lyon Street Viz")
+
+# Récupérer les préférences utilisateur
+user_prefs = get_user_preferences()
+
 # 1- Récupération des données (rues de Lyon et limites de la ville)
 print_section_title(1, "Récupération des données")
 print_progress("Chargement des données des rues de Lyon...", color=TermColors.YELLOW)
@@ -65,10 +122,8 @@ print(f"   {len(filtered_features)} rues trouvées dans Lyon")
 print_section_title(3, "Visualisation des données")
 print_progress("Création de la carte...", color=TermColors.YELLOW)
 
-# Light version of the map
-m = folium.Map(location=[45.764043, 4.835659], zoom_start=13, tiles="CartoDB Positron")
-# Dark version of the map
-#m = folium.Map(location=[45.764043, 4.835659], zoom_start=13, tiles="CartoDB dark_matter")
+# Utiliser le thème choisi par l'utilisateur
+m = folium.Map(location=[45.764043, 4.835659], zoom_start=13, tiles=user_prefs["map_theme"])
 
 print_section_title(4, "Ajout des rues à la carte")
 print_progress("Traitement des rues...", color=TermColors.YELLOW)
@@ -101,8 +156,8 @@ for i, feature in enumerate(filtered_features):
     folium.GeoJson(
         feature,
         style_function=lambda x, prefix=prefix, weight=weight: {
-            'fillColor': get_color(prefix),
-            'color': get_color(prefix),
+            'fillColor': get_color(prefix, theme=user_prefs["color_theme"]),
+            'color': get_color(prefix, theme=user_prefs["color_theme"]),
             'weight': weight,
             'fillOpacity': 0.5,  # Légèrement réduit pour plus de clarté
         }
@@ -119,5 +174,10 @@ timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
 result_filename = f'../results/{timestamp}-lyon.html'
 m.save(result_filename)
 
-print(f"\n{TermColors.GREEN}✨ Carte sauvegardée sous: {result_filename} ✨{TermColors.END}")
-print(f"\n{TermColors.BOLD}{TermColors.GREEN}Traitement terminé avec succès!{TermColors.END}")
+print(f"   Carte HTML sauvegardée: {result_filename}")
+
+# Export PNG si demandé
+if user_prefs["export_format"] == 2:
+    print(f"\n{TermColors.RED}❌ Feature en cours de développement !{TermColors.END}")
+
+print(f"\n{TermColors.GREEN}✨ Traitement terminé avec succès! ✨{TermColors.END}")

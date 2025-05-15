@@ -75,34 +75,19 @@ def get_prefix(street_name):
             return prefix
     return 'Autre'
 
-def get_color(prefix):
+def get_color(prefix, theme="light"):
     """
     Get color code for street type visualization
     
     Args:
         prefix (str): Street type prefix
+        theme (str): 'light' or 'dark' color theme
         
     Returns:
         str: Hex color code
     """
-
-    """
-    color_map = {
-        'Rue': '#E6E6FA',  # Rue
-        'Place': '#FFD700',  # Place
-        'Avenue': '#98FB98',  # Avenue
-        'Quai': '#FFA07A',  # Quai
-        'Allée': '#ADD8E6',  # Allée
-        'Boulevard': '#FFCCCB',  # Boulevard
-        'Impasse': '#FFD1DC',  # Impasse
-        'Cours': '#C1FFC1',  # Cours
-        'Montée': '#87CEFA',  # Montée
-        'Passage': '#FFDEAD',  # Passage
-        'Autre': '#F0E68C'      # Khaki
-    }
-    """
     # Color for the light version of the map
-    color_map = {
+    light_color_map = {
         'Rue': '#6929c4',
         'Place': '#1192e8',
         'Avenue': '#005d5d',
@@ -117,7 +102,7 @@ def get_color(prefix):
     }
 
     # Color for the dark version of the map
-    """color_map = {
+    dark_color_map = {
         'Rue': '#8a3ffc',
         'Place': '#33b1ff',
         'Avenue': '#007d79',
@@ -129,5 +114,7 @@ def get_color(prefix):
         'Montée': '#ba4e00',
         'Passage': '#bae6ff',
         'Autre': '#fff1f1'
-    }"""
+    }
+    
+    color_map = dark_color_map if theme == "dark" else light_color_map
     return color_map.get(prefix, '#D3D3D3')
