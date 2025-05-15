@@ -85,6 +85,8 @@ def get_color(prefix):
     Returns:
         str: Hex color code
     """
+
+    """
     color_map = {
         'Rue': '#E6E6FA',  # Rue
         'Place': '#FFD700',  # Place
@@ -98,4 +100,34 @@ def get_color(prefix):
         'Passage': '#FFDEAD',  # Passage
         'Autre': '#F0E68C'      # Khaki
     }
+    """
+    # Color for the light version of the map
+    color_map = {
+        'Rue': '#6929c4',
+        'Place': '#1192e8',
+        'Avenue': '#005d5d',
+        'Quai': '#fa4d56',
+        'Allée': '#198038',
+        'Boulevard': '#002d9c',
+        'Impasse': '#ee538b',
+        'Cours': '#b28600',
+        'Montée': '#8a3800',
+        'Passage': '#009d9a',
+        'Autre': '#9f1853'
+    }
+
+    # Color for the dark version of the map
+    """color_map = {
+        'Rue': '#8a3ffc',
+        'Place': '#33b1ff',
+        'Avenue': '#007d79',
+        'Quai': '#fa4d56',
+        'Allée': '#6fdc8c',
+        'Boulevard': '#4589ff',
+        'Impasse': '#d12771',
+        'Cours': '#d2a106',
+        'Montée': '#ba4e00',
+        'Passage': '#bae6ff',
+        'Autre': '#fff1f1'
+    }"""
     return color_map.get(prefix, '#D3D3D3')

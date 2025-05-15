@@ -23,7 +23,7 @@ with open('../data/raw-lyon_street_source.geojson', 'r', encoding='utf-8') as fi
     streets_data = json.load(file)
 
 print_progress("Chargement des limites de la ville...", color=TermColors.YELLOW)
-with open('../data/raw-lyon-limits.geojson', 'r', encoding='utf-8') as file:
+with open('../data/raw-lyon_limits.geojson', 'r', encoding='utf-8') as file:
     lyon_bounds_data = json.load(file)
 
 print_progress("Extraction des limites de Lyon...", color=TermColors.YELLOW)
@@ -40,6 +40,19 @@ for i, feature in enumerate(streets_data['features']):
     if i % 100 == 0 and i > 0:
         sys.stdout.write(f"\r   {i}/{total_features} rues analysées ({int(i/total_features*100)}%)...")
         sys.stdout.flush()
+    
+    # Ignorer les trottoirs séparés
+    if feature['properties'].get('highway') == 'footway' and feature['properties'].get('footway') == 'sidewalk':
+        continue
+    
+    # Ignorer les passages piétons
+    if feature['properties'].get('highway') == 'footway' and feature['properties'].get('footway') == 'crossing':
+        continue
+    
+    # Ignorer également les autres types de passages piétons
+    if feature['properties'].get('highway') == 'crossing':
+        continue
+    
     feature_shape = shape(feature['geometry'])
     if feature_shape.within(lyon_bounds):
         filtered_features.append(feature)
@@ -52,7 +65,10 @@ print(f"   {len(filtered_features)} rues trouvées dans Lyon")
 print_section_title(3, "Visualisation des données")
 print_progress("Création de la carte...", color=TermColors.YELLOW)
 
+# Light version of the map
 m = folium.Map(location=[45.764043, 4.835659], zoom_start=13, tiles="CartoDB Positron")
+# Dark version of the map
+#m = folium.Map(location=[45.764043, 4.835659], zoom_start=13, tiles="CartoDB dark_matter")
 
 print_section_title(4, "Ajout des rues à la carte")
 print_progress("Traitement des rues...", color=TermColors.YELLOW)
@@ -87,4 +103,3 @@ m.save(result_filename)
 
 print(f"\n{TermColors.GREEN}✨ Carte sauvegardée sous: {result_filename} ✨{TermColors.END}")
 print(f"\n{TermColors.BOLD}{TermColors.GREEN}Traitement terminé avec succès!{TermColors.END}")
-m
