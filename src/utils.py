@@ -113,7 +113,7 @@ def get_color(prefix):
         'Cours': '#b28600',
         'Montée': '#8a3800',
         'Passage': '#009d9a',
-        'Autre': '#9f1853'
+        'Autre': '#4d4d4d'
     }
 
     # Color for the dark version of the map

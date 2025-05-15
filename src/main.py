@@ -80,13 +80,31 @@ for i, feature in enumerate(filtered_features):
         sys.stdout.flush()
     street_name = feature['properties'].get('name', '')
     prefix = get_prefix(street_name)
+    
+
+    weight_map = {
+        'Boulevard': 1.5,
+        'Avenue': 1.5,
+        'Cours': 1.5,
+        'Quai': 1.5,
+        'Rue': 1.2,
+        'Place': 1.2,
+        'Allée': 1,
+        'Montée': 1,
+        'Impasse': 0.9,
+        'Passage': 0.9,
+        'Autre': 0.5 
+    }
+    
+    weight = weight_map.get(prefix, 1)
+    
     folium.GeoJson(
         feature,
-        style_function=lambda x, prefix=prefix: {
+        style_function=lambda x, prefix=prefix, weight=weight: {
             'fillColor': get_color(prefix),
             'color': get_color(prefix),
-            'weight': 1,
-            'fillOpacity': 0.6,
+            'weight': weight,
+            'fillOpacity': 0.5,  # Légèrement réduit pour plus de clarté
         }
     ).add_to(m)
 
