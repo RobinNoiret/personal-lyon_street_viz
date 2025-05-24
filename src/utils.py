@@ -325,6 +325,55 @@ def save_map(m, export_format=1):
     
     # Export PNG si demandé
     if export_format == 2:
-        print(f"\n{TermColors.RED}❌ Feature en cours de développement !{TermColors.END}")
+        try:
+            from selenium import webdriver
+            from selenium.webdriver.chrome.service import Service
+            from selenium.webdriver.chrome.options import Options
+            import time
+            
+            print_progress("Exportation en PNG...", color=TermColors.YELLOW)
+            
+            # Chemin absolu vers le fichier HTML
+            abs_path = os.path.abspath(result_filename)
+            file_url = f"file:///{abs_path}"
+            
+            # Configuration de Chrome
+            chrome_options = Options()
+            chrome_options.add_argument("--headless")  # Mode sans interface graphique
+            chrome_options.add_argument("--window-size=1920,1200")  # Taille de fenêtre HD
+            
+            # Essayer d'abord avec Brave
+            try:
+                # Chemin vers Brave (ajustez selon votre installation)
+                brave_path = "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
+                if os.path.exists(brave_path):
+                    chrome_options.binary_location = brave_path
+                    driver = webdriver.Chrome(options=chrome_options)
+                    print("   Utilisation du navigateur Brave")
+                else:
+                    # Si Brave n'est pas trouvé, utiliser Chrome
+                    driver = webdriver.Chrome(options=chrome_options)
+                    print("   Utilisation du navigateur Chrome")
+            except Exception:
+                # Fallback sur Chrome si Brave échoue
+                driver = webdriver.Chrome(options=chrome_options)
+                print("   Utilisation du navigateur Chrome")
+            
+            # Ouvrir la page et attendre que la carte se charge
+            driver.get(file_url)
+            time.sleep(3)  # Attendre que la carte soit entièrement chargée
+            
+            # Prendre une capture d'écran
+            png_filename = result_filename.replace('.html', '.png')
+            driver.save_screenshot(png_filename)
+            driver.quit()
+            
+            print(f"   Carte PNG sauvegardée: {png_filename}")
+            
+        except ImportError:
+            print(f"\n{TermColors.YELLOW}⚠️ L'exportation en PNG nécessite Selenium.{TermColors.END}")
+            print(f"   Pour l'installer: pip install selenium")
+        except Exception as e:
+            print(f"\n{TermColors.RED}❌ Erreur lors de l'exportation en PNG: {str(e)}{TermColors.END}")
     
     return result_filename
